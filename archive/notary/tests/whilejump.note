@@ -1,0 +1,25 @@
+info target x86_64-w64-windows-gnu
+info modname whilej
+info output whilejump
+extlink fn printf sig variadic (&u8) -> i32
+extlink fn sleep sig (i32) -> i32
+
+new fn main sig () -> i32
+new block entry
+assign a as (i32,new(i32, 5))
+new while (new op ("!=",load (i32,a),new(i32,0)))
+new block b1
+call printf (new (String,"Whiling away my time\n"))
+call printf(new (String,"A: %d\n"),load(i32,a))
+assign a as (i32, new op("-",load (i32,a),new (i32,1)))
+assign b as (i32, new op("-",load (i32,a),new (i32,1)))
+call sleep (new(i32,3))
+endwhile cond (new op ("!=",load (i32,a),new(i32,0)))
+end block
+end block
+call printf (new (String,"A: %d\n"),load (i32,a))
+return call printf (new (String,"Finished execution\n"))
+end block
+end fn
+internal build
+internal clean

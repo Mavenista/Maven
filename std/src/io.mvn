@@ -1,0 +1,76 @@
+
+extern C {
+    fn printf(str: RawString,...) -> i32
+    fn sleep(sec: i32) -> i32
+    fn getchar() -> Character
+    fn malloc(sz: i64) -> &i8
+    fn realloc(ptr: &i8, sz: i64) -> GenericPointer
+    fn strcpy(dest: &Character, src: &Character) -> &Character 
+    fn strcat(dest: &Character, src: &Character) -> &Character 
+    fn free(ptr: &i8) -> i32
+    fn exit(code: i32) -> i32
+    fn sprintf(str: RawString,fmt: RawString,...) -> i32
+    fn system(cmd: RawString) -> i32
+}
+
+stralloc = malloc as @sig (i64) -> RawString
+fn stringify(ch: Character) -> RawString {
+    stralloc = malloc as @sig (i64) -> RawString
+    buff = stralloc(2i64)
+    sprintf(buff,"%c",ch)
+    return buff
+}
+
+fn readline() -> RawString {
+    //charmander = Character;
+    
+    ch = getchar()
+
+    stralloc = malloc as @sig (i64) -> RawString // global scope is ineffective as not public or to say, main is never "called"
+    //charcpy = strcpy as @sig (&Character,Character) -> &Character
+
+    buffer = &stralloc(2i64)
+    buf = &b mut buffer
+    
+    chars = 2i64
+    
+    strbuf = stringify(ch)
+    
+    
+    strcpy(*buf, src: strbuf) // fix fns not being able to be used directly
+    
+    free(strbuf)
+
+
+    //strrelloc = malloc as @|sig (&Character,i64) -> RawString
+    while ch != 10Character {
+        
+
+        
+        
+        mut ch = getchar()
+        mut chars += 1i64
+        mut tmp = *buf
+        
+        buf &= stralloc(chars * @sizeof Character)
+        
+        strcpy(* buf, src: tmp)
+        mut strton = stringify(ch)
+
+        strcat(* buf, src: strton)
+        free(strton)
+        free(tmp)
+
+    
+    }
+    
+
+
+    
+    return *buf
+}
+pub fn input(prompt: RawString) -> RawString {
+    printf(prompt)
+    inp = readline()
+    return inp
+}

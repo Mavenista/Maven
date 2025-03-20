@@ -1,0 +1,1 @@
+g++ test.cpp -o test.exe -IC:\llvm\include -LC:\llvm\lib -std=c++17 -fno-rtti -lLLVMSupport -lLLVMCore  -lLLVMIRReader -lLLVMBitReader -lLLVMBitWriter -lLLVMTransformUtils -lLLVMAnalysis -lLLVMDemangle -lLLVMBinaryFormat -lucrt -lmsvcrt -lc -static-libgcc -static-libstdc++

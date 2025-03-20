@@ -1,0 +1,1 @@
+clang++ -c polaroid.cpp -o polaroid.o -I/opt/homebrew/Cellar/llvm/19.1.7_1/include -std=c++17 -stdlib=libc++   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/opt/homebrew/opt/llvm/lib -lLLVM-19 -Xanalyzer -Wpedantic -Wall -I./include

@@ -1,0 +1,138 @@
+struct in_addr {
+    s_addr : u32
+}
+
+struct sockaddr {
+    sa_len: u8,
+    sa_family:u8,
+    sa_data: [Character:14],
+
+
+};
+
+
+
+
+struct sockaddr_in {
+    sin_len: u8,
+    sin_family: u8,
+    sin_port: u16,
+    sin_addr: in_addr,
+    sin_zero: [Character:8]
+};
+
+struct hostent {
+    h_name: RawString,     // Official name of host
+    h_aliases: &RawString,   // Alias list
+    h_addrtype: i32,     // Address type (AF_INET)
+    h_length: i32,       // Length of addresses
+    h_addr_list: &RawString // List of addresses (IPv4 in binary form)
+};
+
+BUFFER_SIZE = 4096i64
+
+
+extern C {
+    fn printf(format: RawString, ...) -> i32  
+    fn perror(str: RawString) -> i32  
+    fn exit(code: i32) -> i32  
+    fn strlen(s: RawString) -> 1i64  
+    fn memset(ptr: &i8, value: i32, num: i64) -> &i8  
+    fn strcpy(dest: RawString, src: RawString) -> RawString  
+    fn strncpy(dest: &i8, src: RawString, num: i64) -> &i8 
+    fn memcpy(dest: &i8, src: &i8,sz: i32) -> &i8
+    fn malloc(sz: i64) -> &i8
+
+    fn read(fd: i32, buf: &i8, count: i64) -> i64  
+    fn write(fd: i32, buf: &i8, count: i64) -> i64  
+    fn close(fd: i32) -> i32  
+
+    fn gethostbyname(host: RawString) -> &hostent
+    fn socket(domain: i32, type: i32, protocol: i32) -> i32
+    fn htons(hostshort: i32) -> u16
+    fn bind(sockfd: i32, addr: &i8, addrlen: i32) -> i32  
+    fn listen(sockfd: i32, backlog: i32) -> i32  
+    fn accept(sockfd: i32, addr: &i8, addrlen: &i8) -> i32  
+    fn send(sockfd: i32, buf: &i8, len: i64, flags: i32) -> i64  
+    fn recv(sockfd: 32, buf: &i8, len: i64, flags: i32) -> i64
+    fn connect(sockfd: i32, sockaddr: &sockaddr,addr_len: i64) -> i32
+    
+    
+    fn inet_ntoa(ina:  &in_addr) -> RawString
+    fn inet_pton(code: i32, to: RawString, sin_addr: &in_addr) -> i32
+    fn ntohs(netshort: u16) -> u16; 
+    fn shutdown(sockfd: i32, how: i32) -> i32
+
+    fn snprintf(str: RawString,size: i64, format: RawString,...) -> i32
+
+
+
+    
+
+} // why does &hostent fail?
+
+// (Code, Content)
+stralloc = malloc as @sig(i64) -> RawString
+pub fn request(@i site to: RawString,port: i32,@i content with: RawString) -> (i32, RawString) {
+    mut site_addr = sockaddr_in{sin_len: 0u8, sin_family: 0u8, sin_port: htons(80),sin_addr: in_addr{s_addr: 0u32},sin_zero: [Character:8]}
+    sockfd = socket(2, 1,0);
+    printf("Sockfd: %d\n",sockfd)
+    //perror("Sockfd: ")
+    Assert(
+        that: sockfd != -1,
+        reason: "Socket creation failed"
+    )
+    host = gethostbyname(site)
+    //perror("host ")
+    AssertDefer(
+        that: host != null,
+        defer: @|() -> RawString{
+            println("Deferral")
+            "Failed to get host (check request url)" 
+        }
+    )
+
+    printf("host_addr(p): %p\n",host)
+
+    memset(ref site_addr,0,@sizeof sockaddr_in)
+    site_addr.sin_family = 2u8 // AF_INET
+    site_addr.sin_port = htons(port) // default port (investigate this)
+
+
+    printf("hlen: %d\n",|*host|.h_length)
+    memcpy(ref site_addr.sin_addr.s_addr, *|*host|.h_addr_list[0], |*host|.h_length)
+
+    //site_addr.sin_addr.s_addr = *|*host|.h_addr_list[0]
+
+
+    
+    println("Beginning connection")
+    conn = connect(sockfd, ref site_addr, @sizeof site_addr)
+    printf("Con: %d\n",conn)
+    //perror("Connection: ")
+    Assert (
+        that: conn == 0,
+        reason: "Failed connection"
+    )
+    request_len = strlen("GET / HTTP/1.1\r\nHost: \r\nConnection: close\r\n\r\n") + strlen(site) // Does strlen not include the null terminator?
+    request = stralloc(request_len + 1i64)
+    snprintf(request, request_len,
+            "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n",
+            "/", site)
+    printf("request: '%s'\n",request)
+    printf("request_len: '%d'\n",request_len)
+    printf("request_len: '%d'\n",strlen(request))
+    sent = send(sockfd,request,strlen(request),0)
+    perror("send")
+    printf("send: %d\n",send)
+    Assert (
+        that:  sent != -1i64,
+        reason: "Failed to send request"
+    )
+    close(sockfd)
+
+    return (0, "")
+}
+
+request(to: "google.com",port: 80, with: "")
+

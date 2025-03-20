@@ -1,0 +1,29 @@
+info target x86_64-w64-windows-gnu
+info modname ifj
+info output ifjump
+extlink fn printf sig (String) -> i32
+
+new fn main sig () -> i32
+new block entry
+assign ten as (i32,new (i32,10))
+new if (new op ("==",new(i32,1),new(i32,1)))
+else
+if if
+new block b1
+assign ten as (i32,load(i32,ten))
+assign PS as (String,new (String, "Hello from __allocreigon!"))
+call printf (new (String,"Hello true if!\n"))
+call printf (load(String,PS))
+endif
+end block
+if else
+new block b2
+call printf (new (String,"Hello true else!\n"))
+
+endelse
+end block
+return call printf (new (String,"Finished execution\n"))
+end block
+end fn
+internal build
+internal clean

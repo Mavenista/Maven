@@ -1,0 +1,60 @@
+info target x86_64-w64-windows-gnu
+info modname accessstringargv
+info output accessstringargv
+extlink fn printf sig variadic (String) -> i32
+
+new fn main sig (i32,&String) -> i32
+new block entry
+call printf (new (String, "AC: %c\n"),access ptrindex (Character,new(String, "hello world"),new (i32,0)))
+call printf (new (String, "Arg1: %s\n"),access ptrindex (&String, argload 1,new (i32,1)))
+call printf (new (String,"hello from inside notary\n"))
+assign a as (i32,new(i32,10))
+new struct Point
+field x as i32
+field y as String
+endstruct
+
+new structInstance Point as pt
+field x as new (i32,10)
+field y as new (String,"hello world")
+endstructI
+
+new struct Rect
+field p1 as Point
+endstruct
+
+new structInstance Rect as rect 
+field p1 as 
+new structInstance Point as pt2
+field x as new (i32,10)
+field y as new (String,"hello world")
+endstructI
+field p2 as 
+new structInstance Point as pt2
+field x as new (i32,11)
+field y as new (String,"hello p2")
+endstructI
+endstructI
+
+new fn external makerect sig () -> Point
+new block entry2
+new structInstance Point as pt
+field x as new (i32,10)
+field y as new (String,"hello world")
+endstructI
+return load (Point,pt)
+end block
+end fn
+new fn external println sig (String) -> i32
+new block entry3
+return call printf (argload 0)
+end block
+end fn
+assign v as (Point, call makerect())
+call printf (new(String,"done with main\n"))
+return new (i32, 0)
+
+end block
+end fn
+internal build
+internal clean

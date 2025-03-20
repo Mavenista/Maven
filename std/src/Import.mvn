@@ -1,0 +1,96 @@
+import header "mach/mach.h"
+#linklib(name="libc")
+//#allow(c_refs)
+
+extern C{
+    fn printf(str: RawString,...) -> i32
+    fn malloc(sz: i64) -> &i32
+    fn realloc(ptr: &i32,sz: i32) -> &i32
+    fn mach_task_self() -> &i8
+    fn mach_vm_allocate(task: &i8, addr:&i64,sz:i64,flags: i32) -> i32
+    fn mach_vm_deallocate(task:&i8,ptr: &i64, sz: i64) -> i32
+    fn memcpy(dst: i64, src: i64,sz: i64) -> &i8
+    fn memset(ptr: i64, val: i32, sz: i64) -> &i8
+}
+
+
+
+todo {
+fn Mach_Realloc(ptr: &i8, @i sz with: i64, @i sz2 having: i64) -> &i8 {
+    printf("v: %d\n", ptr[0])
+    printf("Addr: %p\n",ptr)
+    new_ptr = &i8
+    printf("Addr: %p\n",new_ptr)
+    task = mach_task_self()
+    kern = mach_vm_allocate(task: task,
+                            addr: new_ptr,
+                            sz: sz,
+                            flags: 1
+    
+    )
+    printf("Kern: %s\n", {kern is 0} ? "Good" ! "Bad" )
+    if kern != 0 {
+        printf("Fail: %d\n",kern);
+        Abort(reason: "Failed realloc")
+    }
+    printf("Memcpy\n");
+    printf("Addr: %p\n",new_ptr)
+    printf("Addr: %p\n",ptr)
+    memcpy(new_ptr,ptr,sz2 as i64)
+    printf("dealloc\n");
+    //mach_vm_deallocate(task, ptr,sz2)
+    printf("done\n")
+    return new_ptr
+    
+}
+}
+
+task = mach_task_self()
+mut ptr = 0i64
+
+
+mut kern = mach_vm_allocate(task,ref ptr,0x4000,1)
+printf("Kern: %s (%d)\n", {kern is 0} ? "Good" ! "Bad", kern )
+printf("Addr: %p\n",ptr)
+//ptr = 17u64
+printf("Val: %d\n")
+Assert(
+    that:  ptr != 0i64,
+    reason: "WHY IS THIS MFING ADDR 0",
+)
+memset(ptr,0x42 as i32,0x4000)
+
+// ##############
+// RE_ALLOC COMPONENT
+// ##############
+
+
+new_addr = ptr + 0x4000
+kern = mach_vm_allocate(task,ref new_addr,0x8000,1)
+printf("Kern: %s (%d)\n", {kern is 0} ? "Good" ! "Bad", kern )
+printf("Addr: %p\n",new_addr)
+
+//ptr = 17u64
+printf("Val: %d\n")
+Assert(
+    that:  new_addr != 0i64,
+    reason: "WHY IS THIS MFING ADDR 0 v2",
+)
+memcpy(new_addr,ptr,0x4000)
+
+// ##############
+// Destroy
+// ##############
+
+mach_vm_deallocate(mach_task_self(),ref ptr, 0x4000)
+
+println("Finished execution")
+
+
+
+
+
+
+
+
+

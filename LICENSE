@@ -1,0 +1,36 @@
+# MAVEN LICENSE v1.0
+
+## 1. Definitions
+"Maven" refers to all projects within this repository.
+"Entity" refers to any individual, organization, or legal entity that interacts with Maven.
+"Consumer" refers to any user of Maven, including but not limited to developers, businesses, and end-users.
+
+## 2. Grant of License
+Subject to the terms of this License, Entities and Consumers are granted a **limited, non-exclusive, non-transferable, and revocable license** to:
+
+- Use Maven's bundled runtime **only** when used alongside Maven's project management program (located in the `maven/` directory of this repository).
+- Fork this repository **solely for the purpose of contributing to Maven** via pull requests or similar contribution mechanisms.
+
+## 3. Restrictions
+Entities and Consumers **shall not**:
+
+- Copy, duplicate, reproduce, or distribute any portion of Maven’s source code, documentation, or compiled binaries outside of the permissions explicitly granted in this License.
+- Maintain a fork of Maven outside of contribution purposes. Any fork not intended for contribution shall be considered a violation of this License.
+- Modify or rebrand Maven under a different name for distribution, resale, or any other purpose.
+- Use, integrate, or distribute Maven in a manner that circumvents the requirement to use Maven's project management program as specified in Section 2.
+
+## 4. Enforcement and Termination
+This License is automatically terminated if an Entity or Consumer violates any term herein. Upon termination, the violating party must immediately cease all use, distribution, or interaction with Maven. The repository maintainers reserve the right to take legal or other necessary actions to enforce this License.
+
+## 5. Disclaimer of Warranty and Liability
+Maven is provided **"as is"** without warranty of any kind, express or implied, including but not limited to warranties of merchantability or fitness for a particular purpose. The maintainers of Maven shall not be held liable for any damages, losses, or legal issues arising from the use of Maven.
+
+## 6. Governing Law
+This License shall be governed by and construed in accordance with the laws of the jurisdiction in which the repository maintainers primarily operate. Any disputes shall be resolved in the appropriate courts of that jurisdiction.
+
+## 7. Amendments
+The maintainers of Maven reserve the right to modify or update this License at any time. Any changes will take effect upon publication in the repository.
+
+---
+By using, forking, or interacting with Maven, you acknowledge and agree to the terms of this License.
+

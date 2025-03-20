@@ -1,0 +1,5 @@
+
+__compileprint__("Helo from compiler, this has b33n taken 0ver") // time to work on pub structs
+pub struct X {
+    y: i32
+}

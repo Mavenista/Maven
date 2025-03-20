@@ -1,0 +1,67 @@
+info target x86_64-w64-windows-gnu
+info modname iosout
+info output iosout
+extlink fn printf sig variadic (RawString) -> i32
+extlink fn strcmp sig (RawString,RawString) -> i32
+
+new fn main sig (i32,&RawString) -> i32
+new block entry
+new enum T
+field x
+field y as (i32,i32)
+field a as (RawString,i32)
+field z
+endenum
+
+new EnumKey from y (T,new(i32,10),new(i32,19))
+new EnumKey from z (T)
+assign EKA as (T, new EnumKey from a (T,new(RawString,"hallo\n"),new(i32,11))) 
+
+
+
+new fn external EnumTest sig (&T,RawString) -> void
+new block b1
+call printf (new(RawString, "so %s"),argload 1)
+new if (new op ("==",call strcmp (argload 1, new(RawString, "hola")),new(i32,0)))
+else
+if if
+new block b7
+assign EK102 as (T,new EnumKey from a (T,argload 1,new(i32,10)))
+modify ptr (argload 0, load (T,EK102))
+call printf (new(RawString,"EKVIN: %d"),access EnumKey (T,i32,load half (T,EK102),0))
+return void
+endif
+end block
+if else
+new block b8
+assign EKZ2 as (T, new EnumKey from z (T))
+modify ptr (argload 0, load (T,EKZ2))
+return void
+
+endelse
+end block
+return void
+end block
+end fn
+
+attach cmethod EnumTest to T
+assign idk as (T, new EnumKey from z (T))
+new fn Printable sig (RawString) -> i32
+new block b2939
+return call printf(argload 0)
+end block
+end fn
+attach cmethod Printable to idk
+call cmethod EnumTest (T,idk,load half (T,idk),new (RawString, "hola"))
+attach cvalue smth to T (RawString, new(RawString,"Something"))
+call printf(new(RawString,"CV: %s\n"),get cvalue smth (T,idk,RawString))
+modify cvalue smth(T,idk,new(RawString,"Something the 2nd!"))
+call printf(new(RawString,"CV: %s\n"),get cvalue smth (T,idk,RawString))
+call printf(new(RawString,"Ekid: %d\n"),load half(T,idk))
+
+call printf(new(RawString,"Ptable: %d\n"),call cmethod Printable (T,idk,new(RawString, "\nHello world from ptable\n")))
+return new (i32,0)
+end block
+end fn
+internal build
+internal clean

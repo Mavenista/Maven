@@ -1,0 +1,41 @@
+info modname ntest
+info target x86_64-w64-windows-gnu
+info output out.exe
+info link libstdc++
+info includepath ...
+info linkpath ... 
+ext linkfn printf sig (&Character,...) -> i32
+ext linkfn sprintf sig (&Character,&Character,...) -> i32
+new fn tostr sig (i32) -> String
+# init array needs to be auto
+assign x as (&String,&(new (String,"")))
+call sprintf (ptrload x,new (String,"%d"),&(loadarg 1))
+ret load x
+end fn
+
+new block b1 -> i32
+call tostr (new (i32,100))
+ret new (i32,1)
+end block
+
+assign z as (i32,load b1)
+
+# copy everything not in an fn into main fn
+assign x as (i32,new (i32,1))
+assign y as (f64,new (f64,1.2))
+call printf(call tostr (load x))
+new op ("+",new (f64,-1.2),new (f64,-1.2))
+
+# new (type,expr) - inits resources
+# assign <name> as (type,expr) - stores
+# load <name> - loads
+# ptrload <name> - loads as alloca # need to combine with & (load)
+# call <fnname> (expr,expr,etc) # per arg based
+# ret <expr>
+# sig (argtypes,...) -> rettype
+# ext linkfn <fnname> <sig>
+# new fn <name> <sig>
+# loadarg <index>
+# & (expr) - makes pointer
+# new (&String,"Hi") <- add support for this!
+# end fn

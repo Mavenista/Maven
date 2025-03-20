@@ -1,0 +1,63 @@
+
+#(no_builtins) // Because this is Builtins lol
+#result(package)
+
+extern C {
+    fn printf(str: RawString, ...) -> i32
+    fn exit(code: i32) -> i32
+}
+
+@safe
+pub fn print(@i str using: RawString) -> i32 {
+    printf("%s",str)
+    0
+}
+
+@safe
+pub fn println(@i str using: RawString) -> i32 {
+    printf("%s\n",str)
+    0
+}
+
+
+@safe
+pub fn SubPanic(@i SStr reason: RawString,@i SS withsize: u64){ // pair this with a panic macro
+    printf("Panic: %s (%d)\n",SStr,SS)
+    inline asm (
+        "
+        mov x1, {}
+        add sp, sp, x1
+        mov x0, #1
+        bl _exit
+        ",
+        in(SS)
+    )
+    // unwind stack & exit, but this will be unsafe if x29 is modified elsewhere, can x29 be reserved or can we have a var called size which per allocation increases in sz?
+}
+
+@safe
+pub fn Abort(@i Str reason: RawString){
+    printf("Abort: %s\n",Str)
+    // exit, funnily this is very 'safe'
+    exit(1)
+}
+
+
+pub fn Assert(@i condition that: Bool, reason: RawString){
+    if  condition != true  {
+        printf("Assertion Error: ")
+        Abort(reason: reason);
+    }
+}
+
+pub fn AssertDefer(@i condition that: Bool, @i cb defer: @sig ()-> RawString){
+    if  condition != true  {
+        printf("Assertion Error: ")
+        Abort(reason: cb());
+    }
+}
+
+pub fn Address(@i ptr of: RawString) -> RawString {
+    return ""
+}
+

@@ -1,0 +1,56 @@
+info target x86_64-w64-windows-gnu
+info modname iosout
+info output iosout
+extlink fn printf sig variadic (String) -> i32
+extlink fn strcmp sig (String,String) -> i32
+
+new fn main sig (i32,&String) -> i32
+new block entry
+new enum T
+field x
+field y as (i32,i32)
+field a as (String,i32)
+field z
+endenum
+
+new EnumKey from y (T,new(i32,10),new(i32,19))
+new EnumKey from z (T)
+assign EKA as (T, new EnumKey from a (T,new(String,"hallo\n"),new(i32,11))) 
+
+
+
+new fn external EnumTest sig (&T,String) -> void
+new block b1
+call printf (new(String, "so %s"),argload 1)
+new if (new op ("==",call strcmp (argload 1, new(String, "hola")),new(i32,0)))
+else
+if if
+new block b7
+assign EK102 as (T,new EnumKey from a (T,argload 1,new(i32,10)))
+modify ptr (argload 0, load (T,EK102))
+call printf (new(String,"EKVIN: %d"),access EnumKey (T,i32,load half (T,EK102),0))
+return void
+endif
+end block
+if else
+new block b8
+assign EKZ2 as (T, new EnumKey from z (T))
+modify ptr (argload 0, load (T,EKZ2))
+return void
+
+endelse
+end block
+return void
+end block
+end fn
+
+
+assign idk as (T, new EnumKey from z (T))
+
+call EnumTest (load half (T,idk),new (String, "hola"))
+call printf(new(String,"Ekid: %d\n"),access EnumKey (T,i32,load half (T,idk),0))
+return new (i32,0)
+end block
+end fn
+internal build
+internal clean

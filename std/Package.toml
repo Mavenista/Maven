@@ -1,0 +1,49 @@
+[project]
+name = "std"
+version = "0.1.0"
+type = "static"
+authors = []
+
+[outputs]
+Builtins = "deck"
+http = "exec"
+#VM_PROT = "deck"
+io = "deck"
+Allocator = "deck"
+#Import = "exec"
+#HW = "exec"
+
+[targets]
+targets = ["native"]
+
+[Windows]
+convention = "x86_64-pc-windows-msvc"
+llvm_target = "x86_64-w64-mingw32"
+#options = ["show_cc","show_os_info"]
+toolchain = "/opt/homebrew/opt/mingw-w64/toolchain-x86_64/"
+libpaths = ["/opt/homebrew/opt/mingw-w64/toolchain-x86_64/lib","/opt/homebrew/opt/mingw-w64/toolchain-x86_64/x86_64-w64-mingw32/lib"]
+libs = ["mingw32","gcc","kernel32","msvcrt"]
+ccflags = ["-static-libgcc"]
+# to use mingw-w64's toolchain ^
+exec_suffix = "exe"
+
+
+[global]
+options = ["show_mavenc"]
+#options = ["show_mavenc","show_cc"]
+#ccflags = ["-fsanitize=address -g"]
+
+
+[emissions]
+VM_PROT = ["llvm-ir"]
+Import = ["llvm-ir","object"]
+Builtins = ["llvm-ir","object"]
+io = ["llvm-ir","object"]
+http = ["llvm-ir","object"]
+Allocator = ["llvm-ir","object"]
+
+[externals]
+header_paths = ["/Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/usr/include/"]
+
+[artifacts]
+

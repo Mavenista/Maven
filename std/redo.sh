@@ -1,0 +1,1 @@
+cd ../../mavenc && bash build.sh && sudo mv ./mavenc /usr/local/bin/

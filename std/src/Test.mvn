@@ -1,0 +1,153 @@
+
+extern C {
+    fn printf(str: RawString,...) -> i32
+    fn sleep(sec: i32) -> i32
+    fn getchar() -> Character
+    fn malloc(sz: i64) -> &i8
+    fn realloc(ptr: &i8, sz: i64) -> GenericPointer
+    fn strcpy(dest: &Character, src: &Character) -> &Character 
+    fn strcat(dest: &Character, src: &Character) -> &Character 
+    fn free(ptr: &i8) -> i32
+    fn exit(code: i32) -> i32
+    fn sprintf(str: RawString,fmt: RawString,...) -> i32
+    fn system(cmd: RawString) -> i32
+}
+stralloc = malloc as @|sig (i64) -> RawString
+fn stringify(ch: Character) -> RawString {
+    
+    buff = stralloc(2i64)
+    sprintf(buff,"%c",ch)
+    return buff
+}
+
+fn readline() -> RawString {
+    //charmander = Character;
+    ch = getchar()
+    //stralloc = malloc as @sig (i64) -> RawString
+    //charcpy = strcpy as @sig (&Character,Character) -> &Character
+    buffer = &stralloc(@sizeof Character + 1i64) 
+    buf = &b mut buffer
+    chars = 2i64
+    strbuf = stringify(ch)
+    
+    strcpy(*buf, src: strbuf) // fix fns not being able to be used directly
+    free(strbuf)
+
+    //strrelloc = malloc as @|sig (&Character,i64) -> RawString
+    while ch != 10Character {
+
+        
+        
+        mut ch = getchar()
+        mut chars += 1i64
+        mut tmp = *buf
+        buf &= stralloc(chars * @sizeof Character)
+        strcpy(* buf, src: tmp)
+        mut strton = stringify(ch)
+
+        strcat(* buf, src: strton)
+        free(strton)
+        free(tmp)
+
+    
+    }
+    
+
+
+    
+    return *buf
+}
+fn input(prompt: RawString) -> RawString {
+    printf(prompt)
+    inp = readline()
+    return inp
+}
+//inp = readline()
+todo {
+printf("you said: %s",input("thine name is: "))
+
+notif = #"osascript -e 'display notification " Objective" with title "Do tagging " ' "#
+
+res = system(notif)
+
+if res != 0 {
+    printf("Failed to send notification");
+}
+}
+todo {
+mut struct String {};
+
+extend String {
+    handle = "123"
+}
+
+str = String {};
+
+}
+
+mut struct OSI {
+    os: RawString,
+    cos: RawString,
+    arch: RawString,
+    vendor: RawString
+}
+todo {
+extend OSI {
+    fn getString(self) -> RawString {
+        return cos
+    }
+}
+}
+
+extend OSI {
+    OS = OperatingSystem
+}
+
+
+fn OS(a: @sig ()-> OSI,gos: RawString) -> @sig ()-> {OSI}  {
+    return if gos is OperatingSystem {
+        a
+    } else {
+        @sig ()-> OSI
+    }
+
+}
+
+@OS("windows")
+mut fn OSInfo() ->  {OSI} {
+    printf("Arch: %s\n",Architecture)
+    printf("COS: %s\n",CannonicalOS)
+    printf("Vendor: %s\n",Vendor)
+    return OSI {os: OperatingSystem, cos: CannonicalOS, arch: Architecture,vendor: Vendor}
+}
+
+@OS("darwin")
+mut fn OSInfo() -> {OSI} {
+    printf("Arch: %s\n",Architecture)
+    printf("COS: %s\n",CannonicalOS)
+    printf("Vendor: %s\n",Vendor)
+    return OSI {os: OperatingSystem, cos: CannonicalOS, arch: Architecture,vendor: Vendor}
+}
+
+printf("This is from %s\n",OSInfo().OS)
+
+mut struct String {handle: &RawString};
+
+extend String {
+    fn something(self){
+        printf("%s\n", * self.handle)
+    }
+    fn sethandle(&self, @i str using: RawString){
+        printf("handle before: %s\n", *self.handle)
+        self.handle &= str
+        printf("handle set to: %s\n", *self.handle)
+        
+    }
+}
+
+mut my_str = String {handle: &"Hi"}; my_str.something()
+
+mut my_str2 = String {handle: &"Hielo"}; my_str2.something()
+my_str2.sethandle("idk either man")
+my_str2.something()
+my_str.something() // oof

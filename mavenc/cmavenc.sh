@@ -1,0 +1,1 @@
+/opt/homebrew/opt/llvm/bin/clang++ -std=c++20 ../polaroid/polaroid.o -o mavenc mavenc.cpp -I./include/ -I../polaroid/ -I/opt/homebrew/Cellar/llvm/19.1.7_1/include -L/opt/homebrew/opt/llvm/lib -lLLVM-19 -I./modules/HParser ./modules/HParser/Hparser.o 

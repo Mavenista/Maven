@@ -1,0 +1,18 @@
+info target x86_64-w64-windows-gnu
+info modname anon
+info output anon
+extlink fn printf sig variadic (String) -> i32
+
+new fn main sig () -> i32
+new block entry
+assign ten as (i32,new (i32,10))
+assignable x as i32 block anon1
+call printf (new (String,"Finished execution\n"))
+assign x as (i32,new (i32,10))
+end block
+call printf (new (String,"entryX:%d\n"),load (i32,x))
+return call printf (new (String,"Finished execution\n"))
+end block
+end fn
+internal build
+internal clean

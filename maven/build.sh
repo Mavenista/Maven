@@ -1,0 +1,1 @@
+/opt/homebrew/opt/llvm/bin/clang++ -std=c++20 maven.cpp -o maven -lz

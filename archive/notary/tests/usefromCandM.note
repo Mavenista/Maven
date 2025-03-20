@@ -1,0 +1,27 @@
+info target x86_64-w64-windows-gnu
+info modname iosout
+info output iosout
+extlink fn printf sig variadic (String) -> i32
+extlink fn strcmp sig (String,String) -> i32
+
+
+
+new fn main sig (i32,&String) -> i32
+new block entry
+new enum T
+field x
+field y as (i32,i32)
+field a as (String,i32)
+field z
+endenum
+extlink fn EnumTest sig (&T,String) -> void
+assign idk as (T, new EnumKey from z (T))
+
+call EnumTest (load half (T,idk),new (String, "hola"))
+call printf(new(String,"Ekid: %d\n"),access EnumKey (T,i32,load half (T,idk),0))
+call printf(new(String,"V: %d\n"),access EnumKey (T,i32,load half (T,idk),2))
+return new (i32,0)
+end block
+end fn
+internal build
+internal clean

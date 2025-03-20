@@ -1,0 +1,86 @@
+import io
+extern C {
+    fn printf(str: RawString, ...) -> i32
+    fn strcmp(lhs: RawString, rhs: RawString) -> i32
+    fn strlen(str: RawString) -> i32
+    fn fopen(path: RawString, mode: RawString) -> &i8
+    fn fprintf(file: &i8, content: RawString,...) -> i32
+    fn strcpy(dest: RawString, src: RawString) -> RawString
+    fn malloc(sz: i64) -> &i8
+    fn memcpy(dest: &i8,src:&i8,sz: i64) -> &i8
+    fn realloc(ptr: &i8, new_size: i64) -> &i8
+    fn free(ptr: &i8) -> i32
+}
+ASZ = &0i64
+ALLOC_SZ = &b mut ASZ // kills off the pointer
+
+mut struct HeapPointer{
+    ptr: &i8,
+    size: i64
+}
+
+
+mut tag Destroy(tagger: HeapPointer){
+    println("Freeing")
+    ALLOC_SZ &= |*ALLOC_SZ| -  tagger.size;
+    free(tagger.ptr)
+}   
+
+extend Destroy {
+    fn Destroy(tagger: &i8){
+        println("No need to free a direct pointer")
+    }
+}
+
+@safe // due to null checking
+fn HeapAlloc(sz:i64) -> {HeapPointer} {
+    ptr = malloc(sz)
+    Assert(
+        that: ptr != null,
+        reason: "Failed to allocate memory"
+    )
+    return HeapPointer {ptr: ptr,size: sz}
+}
+
+pub fn Alloc(sz: i64) -> {HeapPointer} { // make this better with templates later
+    ALLOC_SZ &= |*ALLOC_SZ| +  sz;
+    return HeapAlloc(sz) // $Heap difficult until an impl is though off
+}
+
+pub fn Dealloc(ptr: HeapPointer) {
+    __compileprint__(":3")
+    ptr.Destroy()
+}
+
+pub fn Realloc(@i ptr with: HeapPointer, new_sz: i64) -> {HeapPointer} { // make mut args
+    mut HeapPtr = ptr
+    new_ptr = realloc(ptr.ptr,new_sz)
+    ALLOC_SZ &= |*ALLOC_SZ| +  new_sz - ptr.size
+    if new_ptr == null {
+        free(ptr.ptr)
+        Abort("Failed to re-allocate memory")
+    }
+    HeapPtr.ptr = new_ptr
+    HeapPtr.size = new_sz
+    
+    return HeapPtr
+    
+}
+
+pub fn GrowAlloc(@i ptr with: HeapPointer, of_sz: i64) -> {HeapPointer} {
+    actual_sz = ptr.size + of_sz
+    printf("GrowthAlloc: %d\n",actual_sz)
+    return Realloc(ptr, actual_sz)
+
+}
+
+
+
+
+
+
+
+
+
+// on static mode, else must be present when assigned
+

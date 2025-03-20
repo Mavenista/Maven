@@ -1,0 +1,135 @@
+
+
+
+//inline asm ("stp {}, x30, [sp, #-16]!\nmov x29, sp",out(x29) as &i8) // watcher
+extern C {
+    fn printf(str: RawString,...) -> i32
+    fn getchar() -> Character
+    fn malloc(sz: i64) -> &i8
+    fn realloc(ptr: &i8, sz: i64) -> GenericPointer
+    fn strcpy(dest: &Character, src: &Character) -> &Character 
+    fn strcat(dest: &Character, src: &Character) -> &Character 
+    fn free(ptr: &i8) -> i32
+    fn exit(code: i32) -> i32
+    fn sprintf(str: RawString,fmt: RawString,...) -> i32
+    fn system(cmd: RawString) -> i32
+    fn strlen(str: RawString) -> i32
+    fn sleep(sec: i32) -> i32
+    fn ptrace(request: i32, pid: i64, addr: &i8, data:&i8) -> i64
+    fn fork() -> i64
+    fn memcpy(dest: &i8,src:&i8,sz: i64) -> &i8
+    fn vm_protect(task: i64,address:&i8,size: i64,set_max: i32,new_protection:i32) -> i32
+    fn mach_task_self() -> i64
+    fn mmap(addr: i64,len: i64,prot: i32,flags: i32,fd: i32,off:i32) -> &i8
+    fn memset (src: &i8,c: i32,n: i64) -> &i8
+}
+
+pub fn writeInstructions(page: &i8) {
+
+    instructions = [
+        0x52800540 as u32, // mov w0, #42
+        0xd65f03c0 as u32 // ret
+    ]
+    //instructionsptr = &instructions
+    printf("isz: %zu\n",@sizeof instructions)
+    memcpy(page,&instructions,@sizeof instructions)
+}
+
+pub fn hello_world(str: RawString){
+    printf("Hello world %s",str)
+}
+
+
+page = mmap(0i64,16i64,3,4098,-1,0)
+printf("%d\n",page)
+//memset(page,31,4096i64)
+
+printf("Page addr %p\n",page);
+writeInstructions(page)
+kr = vm_protect(mach_task_self(),page,4096i64,0,5)
+
+printf("Kern: %d\n",kr)
+
+
+caller = page as @sig() -> i32
+printf("Caller addr %p\n",caller)
+
+
+pub fn MemoryFunction(instructions: [u32:2]) -> i32 {
+    page = mmap(0i64,16i64,3,4098,-1,0)
+    printf("%d\n",page)
+    //memset(page,31,4096i64)
+
+    printf("Page addr %p\n",page);
+    memcpy(page,&instructions,@sizeof instructions)
+    kr = vm_protect(mach_task_self(),page,4096i64,0,5)
+
+    printf("Kern: %d\n",kr)
+
+
+    caller = page as @sig() -> i32
+    printf("Caller addr %p\n",caller)
+    return caller()
+
+}
+
+printf("pls be 42: %d\n",caller())
+
+
+printf("1979: %d\n",0b11110111011)
+
+printf("2736: %d\n",0o5260)
+
+printf("190: %d\n",0o276)
+
+
+printf("Hexism: %d\n",0b10 b| 0b11)
+printf("Smth %d,%d\n",0o1012,006 )
+printf("Smth %d\n",@typeid 0o701 )
+printf("Smth %d\n",@typeid "Hi" )
+printf("Smth %d\n",@typeid caller )
+printf("Smth %d\n",@typeid kr )
+msg = "Hello world\n"
+imsg = @pti msg
+len = | strlen(msg) as i64 | + 1i64
+fn someASMfun(arg: RawString) -> i32{
+    printf("Hi from ASM and %s\n",arg); return 0
+}
+
+asmf = @pti someASMfun
+
+nmsg = @pti msg
+mut regheh = 4
+someint = 4
+someintalso = 4
+
+intptr = &""
+
+pass = @pti intptr
+fn Assembly(){
+inline asm (
+    "
+    nop
+
+    " // clobber soln aarch64 (stack MUST be 16 byte aligned)
+)
+none
+}
+
+printf("xidi : %p\n",Assembly())
+printf("xidi : %p\n",none)
+
+
+mut struct X{};
+
+extend X {
+    dontbeshared = 10 // init on init
+}
+
+mut Y = X{}
+Y.dontbeshared = 17
+printf("Something else %d\n",Y.dontbeshared)
+
+printf("Something more %d\n",X{}.dontbeshared) // should be 10
+
+
