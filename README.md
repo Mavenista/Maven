@@ -9,7 +9,7 @@ Currently maven is **EXPERIMENTAL** and not recommended for production usage,
 
 Feel free to experiment with maven, leave a star if you think it's cool and make an issue if you break it!
 
-You can check out the docs here: <insert docs link when live>
+You can check out the docs: [here](https://mavenista.github.io/Docs/)
 
 ### Download
 Check releases (for macos)
