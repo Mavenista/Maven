@@ -13,6 +13,9 @@ You can check out the docs here: <insert docs link when live>
 Check releases (for macos)
 
 ### Building from source
+**Requirements:**
+- llvm
+
 Simply:
 ```bash
 git clone https://github.com/Mavenista/Maven/
